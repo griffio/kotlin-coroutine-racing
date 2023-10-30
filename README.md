@@ -4,13 +4,13 @@ https://griffio.github.io/programming/2023/03/18/More-Kotlin-Racing-Ambiguous-Co
 
 Use ktor client http and OkHttp engine
 
-Make staggered requests to http resources with delayed responses and pick the first request to respond
+Make staggered requests to http resources with delayed responses and return the first coroutine to respond, cancelling the rest
 
 https://httpbin.org/
 
 Run locally `docker run -p 80:80 kennethreitz/httpbin`
 
-Requests will be run  concurrently  in random order with a staggered start
+Requests will be run concurrently in random order with a staggered start
 
 Each response is delayed (in seconds) before returning body from server
 
