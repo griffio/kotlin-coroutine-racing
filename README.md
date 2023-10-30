@@ -10,7 +10,9 @@ https://httpbin.org/
 
 Run locally `docker run -p 80:80 kennethreitz/httpbin`
 
-Requests will be run concurrently in random order with a staggered start
+Requests will be run concurrently in random order with a staggered start until the first response
+
+The next request will be run if the previous task fails or exceeds the time-out (e.g. 800ms)
 
 Each response is delayed (in seconds) before returning body from server
 
