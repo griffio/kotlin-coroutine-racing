@@ -4,7 +4,7 @@ https://griffio.github.io/programming/2023/03/18/More-Kotlin-Racing-Ambiguous-Co
 
 Use ktor client http and OkHttp engine
 
-Make staggered requests to http resources with delayed responses and return the first coroutine to respond, cancelling the rest
+Make staggered requests to http resources with delayed responses and return the first coroutine to respond, cancelling the rest if already running
 
 https://httpbin.org/
 
