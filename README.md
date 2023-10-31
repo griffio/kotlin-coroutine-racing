@@ -2,13 +2,13 @@
 
 https://griffio.github.io/programming/2023/03/18/More-Kotlin-Racing-Ambiguous-Coroutines/
 
-Use ktor http client with OkHttp engine or Jdk async HttpClient using coroutine await extension 
+**Make staggered requests** to http resources with delayed responses and return the first coroutine to respond, cancelling the rest if already running
 
-Make staggered requests to http resources with delayed responses and return the first coroutine to respond, cancelling the rest if already running
+This is similar to [HappyEyeBalls](https://www.rfc-editor.org/rfc/rfc8305) where finding the quickest connection can be made with concurrency 
 
-https://httpbin.org/
+Use [Ktor http client](https://ktor.io/docs/create-client.html) with OkHttp engine or [Jdk async HttpClient](https://docs.oracle.com/en/java/javase/11/docs/api/java.net.http/java/net/http/HttpClient.html) using coroutine await extension
 
-Run locally `docker run -p 80:80 kennethreitz/httpbin`
+Send http requests to https://httpbin.org/ or run locally `docker run -p 80:80 kennethreitz/httpbin`
 
 Requests will be run concurrently in random order with a staggered start until the first response
 
