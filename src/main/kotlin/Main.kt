@@ -92,7 +92,7 @@ val delayBy = 800.milliseconds // delay next request
 
 // coroutineScope() uses multi-threaded Dispatchers.Default - could use WithContext(Dispatchers.IO)
 suspend fun main(): Unit = coroutineScope {
-    println(this)
+
     val tasks = listOf(task1, task2, task3, task4, task5).shuffled()
     println(tasks.joinToString("\n"))
     val t = measureTime {
