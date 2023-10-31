@@ -8,21 +8,32 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.selects.onTimeout
 import kotlinx.coroutines.selects.select
+import kotlinx.coroutines.future.await
 
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.measureTime
 import io.ktor.client.engine.okhttp.*
 import java.net.URL
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse.BodyHandlers
 
 typealias ResponseString = String
 
 val client = HttpClient(OkHttp)
 
-suspend fun request(url: URL): ResponseString {
+suspend fun requestKtorClient(url: URL): ResponseString {
     val response = client.request(url)
     return response.bodyAsText()
 }
+
+//val client = HttpClient.newBuilder().build()
+
+//suspend fun requestJdkClient(url: URL): ResponseString {
+//    val request = HttpRequest.newBuilder(url.toURI()).build()
+//    client.sendAsync(request, BodyHandlers.ofString()).await().body()
+//}
 
 // wait for delay or error to be signaled first
 suspend fun delayOrFail(channel: Channel<Unit>, delayBy: Duration) = channelFlow {
@@ -51,9 +62,9 @@ suspend fun happyEyeBalls(tasks: List<URL>, delayedBy: Duration): Flow<ResponseS
     val failedTask = Channel<Unit>(1)
 
     // start the first task immediately
-    launch {
+    launch(Dispatchers.IO) {
         try {
-            send(request(tasks.first()))
+            send(requestKtorClient(tasks.first()))
         } catch (e: Exception) {
             failedTask.trySend(Unit) // it failed, send message to channel
         }
@@ -61,9 +72,9 @@ suspend fun happyEyeBalls(tasks: List<URL>, delayedBy: Duration): Flow<ResponseS
     // start remaining tasks only after either waiting for delay or failed channel element is received
     tasks.drop(1).forEach { task ->
         delayOrFail(failedTask, delayedBy) // wait for delay or failed signal to continue next task
-        launch {
+        launch(Dispatchers.IO) {
             try {
-                send(request(task))
+                send(requestKtorClient(task))
             } catch (e: Exception) {
                 failedTask.trySend(Unit) // task failed, send message to channel - next task will start
             }
@@ -79,7 +90,9 @@ val task5 = URL("http://localhost/delay/9")
 
 val delayBy = 800.milliseconds // delay next request
 
+// coroutineScope() uses multi-threaded Dispatchers.Default - could use WithContext(Dispatchers.IO)
 suspend fun main(): Unit = coroutineScope {
+    println(this)
     val tasks = listOf(task1, task2, task3, task4, task5).shuffled()
     println(tasks.joinToString("\n"))
     val t = measureTime {
@@ -88,6 +101,6 @@ suspend fun main(): Unit = coroutineScope {
         println(winner) // will be delay/1
     }
 
-    println("...in ${t.inWholeSeconds} second/s" ) // will be at least 1 second plus (delayBy * index of task1)
-    client.close()
+    println("...in ${t.inWholeSeconds} second/s") // will be at least 1 second plus (delayBy * index of task1)
+    client.close() //ktor client
 }

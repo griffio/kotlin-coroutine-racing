@@ -2,7 +2,7 @@
 
 https://griffio.github.io/programming/2023/03/18/More-Kotlin-Racing-Ambiguous-Coroutines/
 
-Use ktor client http and OkHttp engine
+Use ktor http client with OkHttp engine or Jdk async HttpClient using coroutine await extension 
 
 Make staggered requests to http resources with delayed responses and return the first coroutine to respond, cancelling the rest if already running
 
@@ -12,7 +12,7 @@ Run locally `docker run -p 80:80 kennethreitz/httpbin`
 
 Requests will be run concurrently in random order with a staggered start until the first response
 
-The next request will be run if the previous task fails or exceeds the time-out (e.g. 800ms)
+The next request will be run if the previous task fails or exceeds the delay (e.g. 800ms)
 
 Each response is delayed (in seconds) before returning body from server
 
