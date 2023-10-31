@@ -62,7 +62,7 @@ suspend fun happyEyeBalls(tasks: List<URL>, delayedBy: Duration): Flow<ResponseS
     val failedTask = Channel<Unit>(1)
 
     // start the first task immediately
-    launch(Dispatchers.IO) {
+    launch {
         try {
             send(requestKtorClient(tasks.first()))
         } catch (e: Exception) {
@@ -72,7 +72,7 @@ suspend fun happyEyeBalls(tasks: List<URL>, delayedBy: Duration): Flow<ResponseS
     // start remaining tasks only after either waiting for delay or failed channel element is received
     tasks.drop(1).forEach { task ->
         delayOrFail(failedTask, delayedBy) // wait for delay or failed signal to continue next task
-        launch(Dispatchers.IO) {
+        launch {
             try {
                 send(requestKtorClient(task))
             } catch (e: Exception) {
