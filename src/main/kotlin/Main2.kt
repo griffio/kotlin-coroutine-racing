@@ -40,11 +40,11 @@ val delayBy = 800.milliseconds // delay next request
 suspend fun main(): Unit = coroutineScope {
 
     val tasks = listOf(
-        task1.asFlow(),
-        task2.asFlow(),
-        task3.asFlow(),
-        task4.asFlow(),
-        task5.asFlow()
+        task1,
+        task2,
+        task3,
+        task4,
+        task5
     ).shuffled()
 
     val t = measureTime {
@@ -58,14 +58,14 @@ suspend fun main(): Unit = coroutineScope {
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
-suspend fun happyEyeBalls(tasks: List<Flow<ResponseString>>, delayedBy: Duration): Flow<ResponseString> {
+suspend fun happyEyeBalls(tasks: List<suspend() -> ResponseString>, delayedBy: Duration): Flow<ResponseString> {
     val failedTask = Channel<Unit>(1)
     return when (tasks.size) {
         0 -> error("no tasks")
-        1 -> tasks.first().catch { failedTask.trySend(Unit) }
+        1 -> tasks.first().asFlow().catch { failedTask.trySend(Unit) }
         else -> {
             merge(
-                tasks.first().catch { failedTask.trySend(Unit) },
+                tasks.first().asFlow().catch { failedTask.trySend(Unit) },
                 flow { emit(delayOrFail(failedTask, delayedBy)) }.flatMapMerge {
                     happyEyeBalls(tasks.drop(1), delayedBy) // delayOrFail flatmap with recursive tasks
                 }

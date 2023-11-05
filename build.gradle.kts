@@ -23,6 +23,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
     implementation("io.ktor:ktor-client-okhttp:2.3.5")
     implementation("io.ktor:ktor-client-core:2.3.5")
+    implementation("io.ktor:ktor-client-logging:2.3.5")
     implementation("org.slf4j:slf4j-simple:2.0.7")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation(kotlin("test"))
