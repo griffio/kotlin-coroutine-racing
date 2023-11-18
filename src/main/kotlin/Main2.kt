@@ -59,7 +59,7 @@ suspend fun main(): Unit = coroutineScope {
 
 @OptIn(ExperimentalCoroutinesApi::class)
 suspend fun happyEyeBalls(tasks: List<suspend() -> ResponseString>, delayedBy: Duration): Flow<ResponseString> {
-    val failedTask = Channel<Unit>(1)
+    val failedTask = Channel<Unit>(Channel.CONFLATED)
     return when (tasks.size) {
         0 -> error("no tasks")
         1 -> tasks.first().asFlow().catch { failedTask.trySend(Unit) }

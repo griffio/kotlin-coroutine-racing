@@ -59,7 +59,7 @@ suspend fun delayTask(delayBy: Duration) {
 }
 
 suspend fun happyEyeBalls(tasks: List<URL>, delayedBy: Duration): Flow<ResponseString> = channelFlow {
-    val failedTask = Channel<Unit>(1)
+    val failedTask = Channel<Unit>(Channel.CONFLATED)  // 1 element
 
     // start the first task immediately
     launch {
